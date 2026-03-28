@@ -4,6 +4,7 @@ import { AppError } from "@/utils/appError.utils";
 import { ApiResponse } from "@/utils/response.utils";
 import { NextRequest } from "next/server";
 
+
 export async function POST(req: NextRequest) {
   try {
     await INIT_DATABASE();

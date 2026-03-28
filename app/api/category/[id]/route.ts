@@ -1,3 +1,4 @@
+import { INIT_DATABASE } from "@/config/database.config";
 import { withAuth } from "@/middleware/auth.middleware";
 import { deleteCategory, getCategory, updateCategory } from "@/services/category.service";
 import { AppError } from "@/utils/appError.utils";
@@ -15,6 +16,7 @@ export const GET = withAuth<{ id: string }>(async (
   { params }
 ) => {
   try {
+    await INIT_DATABASE();
     const { id } = await params;
     const result = await getCategory(id);
 
@@ -44,6 +46,7 @@ export const PUT = withAuth<{ id: string }>(async (
   { params }
 ) => {
   try {
+    await INIT_DATABASE();
     const body = await req.json();
     const { id } = await params;
 
@@ -75,6 +78,7 @@ export const DELETE = withAuth<{ id: string }>(async (
   { params }
 ) => {
   try {
+    await INIT_DATABASE();
     const { id } = await params;
 
     await deleteCategory(id);
