@@ -1,6 +1,7 @@
 import { verifyAccessToken } from "@/config/jwt.config";
+import { NextRequest } from "next/server";
 
-export interface AuthenticatedRequest extends Request {
+export interface AuthenticatedRequest extends NextRequest {
   user?: {
     id: string;
     email?: string;
@@ -8,29 +9,29 @@ export interface AuthenticatedRequest extends Request {
   };
 }
 
-/**
- * Auth middleware wrapper (FIXED)
- */
-export const withAuth = (
+type RouteContext<T = Record<string, unknown>> = {
+  params: Promise<T>;
+};
+
+export const withAuth = <T = Record<string, unknown>>(
   handler: (
     req: AuthenticatedRequest,
-    context: { params: Promise<{ id: string }> }
+    context: RouteContext<T>
   ) => Promise<Response>
 ) => {
   return async (
-    req: AuthenticatedRequest,
-    context: { params: Promise<{ id: string }> }
-  ) => {
+    req: NextRequest,
+    context: RouteContext<T>
+  ): Promise<Response> => {
     try {
       const authHeader = req.headers.get("authorization");
 
-      // ❌ Missing token
       if (!authHeader || !authHeader.startsWith("Bearer ")) {
-        return new Response(
-          JSON.stringify({
+        return Response.json(
+          {
             success: false,
             message: "Unauthorized: Authentication token is missing.",
-          }),
+          },
           { status: 401 }
         );
       }
@@ -40,31 +41,30 @@ export const withAuth = (
       try {
         const decoded = verifyAccessToken(token);
 
-        req.user = {
+        (req as AuthenticatedRequest).user = {
           id: decoded.id,
           email: decoded.email,
           name: decoded.name,
         };
 
-        // 🔥 MUST forward context exactly
-        return handler(req, context);
+        return handler(req as AuthenticatedRequest, context);
 
       } catch {
-        return new Response(
-          JSON.stringify({
+        return Response.json(
+          {
             success: false,
             message: "Unauthorized: Invalid or expired token.",
-          }),
+          },
           { status: 401 }
         );
       }
 
     } catch {
-      return new Response(
-        JSON.stringify({
+      return Response.json(
+        {
           success: false,
           message: "Unauthorized: Please log in to access this resource.",
-        }),
+        },
         { status: 401 }
       );
     }

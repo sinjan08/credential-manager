@@ -2,6 +2,7 @@ import { withAuth } from "@/middleware/auth.middleware";
 import { addCategory, getCategories } from "@/services/category.service";
 import { AppError } from "@/utils/appError.utils";
 import { ApiResponse } from "@/utils/response.utils";
+import { NextRequest } from "next/server";
 
 /**
  * Create a new category
@@ -9,7 +10,7 @@ import { ApiResponse } from "@/utils/response.utils";
  * @returns 
  * @route POST /category
  */
-export const POST = withAuth(async (req: Request) => {
+export const POST = withAuth(async (req: NextRequest) => {
   try {
     const body = await req.json();
     // calling service layer function
@@ -34,7 +35,7 @@ export const POST = withAuth(async (req: Request) => {
  * @returns 
  * @route GET /category
  */
-export const GET = withAuth(async (req: Request) => {
+export const GET = withAuth(async (req: NextRequest) => {
   try {
     const { searchParams } = new URL(req.url);
 
