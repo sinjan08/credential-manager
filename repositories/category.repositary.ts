@@ -73,12 +73,12 @@ export const getAllCategories = async (
       throw new AppError("Limit cannot exceed 100", 400);
     }
 
-    // ✅ Properly typed query (NO any)
-    const query: Parameters<typeof Category.find>[0] = {
+    const query: Partial<Record<keyof CategoryI, unknown>> & {
+      name?: { $regex: string; $options: string };
+    } = {
       isDeleted: false,
     };
 
-    // ✅ search (ILIKE equivalent)
     if (search?.trim()) {
       query.name = { $regex: search.trim(), $options: "i" };
     }

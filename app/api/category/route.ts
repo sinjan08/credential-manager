@@ -1,3 +1,4 @@
+import { INIT_DATABASE } from "@/config/database.config";
 import { withAuth } from "@/middleware/auth.middleware";
 import { addCategory, getCategories } from "@/services/category.service";
 import { AppError } from "@/utils/appError.utils";
@@ -12,6 +13,7 @@ import { NextRequest } from "next/server";
  */
 export const POST = withAuth(async (req: NextRequest) => {
   try {
+     await INIT_DATABASE();
     const body = await req.json();
     // calling service layer function
     const result = await addCategory(body);
@@ -37,6 +39,7 @@ export const POST = withAuth(async (req: NextRequest) => {
  */
 export const GET = withAuth(async (req: NextRequest) => {
   try {
+    await INIT_DATABASE();
     const { searchParams } = new URL(req.url);
 
     const page = Number(searchParams.get("page")) || 1;
