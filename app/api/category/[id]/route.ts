@@ -1,4 +1,4 @@
-import { AuthenticatedRequest, withAuth } from "@/middleware/auth.middleware";
+import { withAuth } from "@/middleware/auth.middleware";
 import { deleteCategory, getCategory, updateCategory } from "@/services/category.service";
 import { AppError } from "@/utils/appError.utils";
 import { ApiResponse } from "@/utils/response.utils";
@@ -10,8 +10,8 @@ import { ApiResponse } from "@/utils/response.utils";
  * @returns 
  * GET /category/:id
  */
-export const GET = withAuth(async (
-  req: AuthenticatedRequest,
+export const GET = withAuth<{ id: string }>(async (
+  req,
   { params }
 ) => {
   try {
@@ -39,13 +39,14 @@ export const GET = withAuth(async (
  * @returns 
  * @route PUT /category/:id
  */
-export const PUT = withAuth(async (
-  req: Request,
+export const PUT = withAuth<{ id: string }>(async (
+  req,
   { params }
 ) => {
   try {
     const body = await req.json();
     const { id } = await params;
+
     const result = await updateCategory(id, body);
 
     return ApiResponse.success("Category updated successfully", result);
@@ -69,12 +70,13 @@ export const PUT = withAuth(async (
  * @returns 
  * @route DELETE /category/:id
  */
-export const DELETE = withAuth(async (
-  req: Request,
+export const DELETE = withAuth<{ id: string }>(async (
+  req,
   { params }
 ) => {
   try {
     const { id } = await params;
+
     await deleteCategory(id);
 
     return ApiResponse.success("Category deleted successfully");

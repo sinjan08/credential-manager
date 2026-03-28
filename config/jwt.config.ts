@@ -1,13 +1,13 @@
-import jwt, { JwtPayload } from "jsonwebtoken";
 import {
     JWTAccessTokenPayload,
     JWTRefreshTokenPayload,
 } from "@/types/user.types";
+import jwt, { JwtPayload } from "jsonwebtoken";
 
 const ACCESS_SECRET = process.env.JWT_ACCESS_SECRET as string;
 const REFRESH_SECRET = process.env.JWT_REFRESH_SECRET as string;
 
-const ACCESS_EXPIRES_IN = "15m";
+const ACCESS_EXPIRES_IN = "24h";
 const REFRESH_EXPIRES_IN = "7d";
 
 if (!ACCESS_SECRET || !REFRESH_SECRET) {
