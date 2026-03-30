@@ -2,7 +2,6 @@ import { CategoryInterface, PaginatedCategories } from "@/Interface/category.int
 import Category from "@/models/category.model";
 import { CreateCategoryDTO } from "@/types/category.types";
 import { AppError } from "@/utils/appError.utils";
-import { FilterQuery } from "mongoose";
 
 
 /**
@@ -74,9 +73,7 @@ export const getAllCategories = async (
     if (limit > 100) {
       throw new AppError("Limit cannot exceed 100", 400);
     }
-
-    // ✅ CORRECT QUERY TYPE
-    const query: FilterQuery<CategoryInterface> = {
+    const query = {
       isDeleted: false,
     };
 
