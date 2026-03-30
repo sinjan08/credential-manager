@@ -73,7 +73,7 @@ export const getAllCategories = async (
       throw new AppError("Limit cannot exceed 100", 400);
     }
 
-    const query: Partial<Record<keyof CategoryI, unknown>> & {
+    const query: Partial<Record<keyof CategoryInterface, unknown>> & {
       name?: { $regex: string; $options: string };
     } = {
       isDeleted: false,
