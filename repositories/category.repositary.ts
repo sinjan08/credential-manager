@@ -3,6 +3,7 @@ import Category from "@/models/category.model";
 import { CreateCategoryDTO } from "@/types/category.types";
 import { AppError } from "@/utils/appError.utils";
 
+
 /**
  * Upsert a category (create or update)
  */
@@ -72,25 +73,25 @@ export const getAllCategories = async (
     if (limit > 100) {
       throw new AppError("Limit cannot exceed 100", 400);
     }
-
-    const query: Partial<Record<keyof CategoryInterface, unknown>> & {
-      name?: { $regex: string; $options: string };
-    } = {
+    
+    const query: Record<string, boolean | RegExp | undefined> = {
       isDeleted: false,
     };
 
     if (search?.trim()) {
-      query.name = { $regex: search.trim(), $options: "i" };
+      query.name = new RegExp(search.trim(), "i");
     }
+
+    const skip = (page - 1) * limit;
 
     // ✅ parallel execution
     const [totalCategories, categories] = await Promise.all([
       Category.countDocuments(query),
       Category.find(query)
         .sort({ createdAt: -1 })
-        .skip((page - 1) * limit)
+        .skip(skip)
         .limit(limit)
-        .lean(),
+        .lean<CategoryInterface[]>(), // ✅ IMPORTANT
     ]);
 
     const totalPages = Math.ceil(totalCategories / limit) || 1;
@@ -106,7 +107,6 @@ export const getAllCategories = async (
       hasMore: page < totalPages,
       categories,
     };
-
   } catch (err: unknown) {
     if (err instanceof AppError) throw err;
 
