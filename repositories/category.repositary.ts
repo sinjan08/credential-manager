@@ -73,12 +73,13 @@ export const getAllCategories = async (
     if (limit > 100) {
       throw new AppError("Limit cannot exceed 100", 400);
     }
-    const query = {
+    
+    const query: Record<string, boolean | RegExp | undefined> = {
       isDeleted: false,
     };
 
     if (search?.trim()) {
-      query.name = new RegExp(search.trim(), "i"); // ✅ cleaner + type-safe
+      query.name = new RegExp(search.trim(), "i");
     }
 
     const skip = (page - 1) * limit;
